@@ -1,18 +1,15 @@
-import type { Config } from "tailwindcss";
-
-export default {
+// tailwind.config.js
+module.exports = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    // other paths if needed...
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      fontFamily: {
+        serif: ["'Source Serif 4'", "serif"],
       },
     },
   },
   plugins: [],
-} satisfies Config;
+};
