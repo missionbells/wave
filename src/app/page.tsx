@@ -1,6 +1,5 @@
 "use client"; // Ensures client-side rendering
 
-import { useState } from "react";
 import ParticleWave from "@/components/ParticleWave";
 import LoginCard from "@/components/LoginCard";
 import Image from "next/image";
