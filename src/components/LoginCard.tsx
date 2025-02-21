@@ -1,4 +1,4 @@
-import ToggleLayoutButton from "@/components/ToggleLayoutButton";
+
 
 export default function LoginCard() {
   return (
@@ -10,9 +10,6 @@ export default function LoginCard() {
         <p className="mt-3 text-gray-600 text-md font-sans">
           Stay ahead of the market with real-time data, smart insights, and the tools all in one place.
         </p>
-
-        {/* Conditional Navigation Button */}
-        <ToggleLayoutButton />
       </div>
     </div>
   );

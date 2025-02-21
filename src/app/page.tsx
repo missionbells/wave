@@ -6,7 +6,6 @@ import LoginCard from "@/components/LoginCard";
 import Image from "next/image";
 
 export default function Home() {
-  const [splitScreen, setSplitScreen] = useState(false);
 
   return (
     <div className="relative min-h-screen">
@@ -22,26 +21,10 @@ export default function Home() {
       </div>
 
 
-      {/* Centered Layout (Default) */}
-      {!splitScreen ? (
         <>
           <ParticleWave />
           <LoginCard />
         </>
-      ) : (
-        /* Split-Screen Layout */
-        <div className="flex h-screen">
-          {/* Left Side (Visual Area) */}
-          <div className="w-1/2 relative">
-            <ParticleWave />
-          </div>
-
-          {/* Right Side (Login Area) */}
-          <div className="w-1/2 flex items-center justify-center bg-white">
-            <LoginCard />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
