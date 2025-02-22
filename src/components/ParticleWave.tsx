@@ -34,8 +34,10 @@ export default function ParticleWave() {
       material.uniforms.uLightIntensities.value = pointLightsRef.current.map(
         (light) => light.intensity
       );
-      material.uniforms.uLightPositions.needsUpdate = true;
-      material.uniforms.uLightIntensities.needsUpdate = true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (material.uniforms.uLightPositions as any).needsUpdate = true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (material.uniforms.uLightIntensities as any).needsUpdate = true;
     };
 
     const init = () => {
@@ -75,7 +77,7 @@ export default function ParticleWave() {
       bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
         0.74, // strength
-        1.0,  // radius (default 1.0)
+        1.0,  // radius
         0.08  // threshold
       );
       composer.addPass(bloomPass);
@@ -107,7 +109,7 @@ export default function ParticleWave() {
           uSpeed: { value: particleWaveConfig.uniforms.uSpeed },
           uBlurStrength: { value: particleWaveConfig.uniforms.uBlurStrength },
           uColorWaveSpeed: { value: particleWaveConfig.uniforms.uColorWaveSpeed },
-          pointSize: { value: particleWaveConfig.uniforms.pointSize },
+          uPointSize: { value: particleWaveConfig.uniforms.pointSize },
           uPrimaryColor: { value: new THREE.Color("#ffdbb8") },
           uSecondaryColor: { value: new THREE.Color("#ffae00") },
           uLightPositions: { value: [] },
@@ -139,10 +141,6 @@ export default function ParticleWave() {
       const animate = () => {
         animationFrameId = requestAnimationFrame(animate);
         material.uniforms.uTime.value = clock.getElapsedTime();
-        // If you want to disable pulsing for manual GUI control, keep pulsing commented:
-        // pointLightsRef.current.forEach((light, index) => {
-        //   light.intensity = 3 + Math.sin(clock.getElapsedTime() * (0.5 + index * 0.3)) * 2;
-        // });
         updateLights();
         composer.render();
       };
@@ -159,16 +157,20 @@ export default function ParticleWave() {
         waveFolder.add(material.uniforms.uFrequency, "value", 0.01, 1).name("Frequency");
         waveFolder.add(material.uniforms.uSpeed, "value", 0.1, 10).name("Speed");
         waveFolder.add(material.uniforms.uColorWaveSpeed, "value", 0.1, 3).name("Color Speed");
-        waveFolder.add(material.uniforms.pointSize, "value", 0.5, 5).name("Particle Size");
+        waveFolder.add(material.uniforms.uPointSize, "value", 0.5, 1).name("Particle Size");
 
         // Color Settings Folder
         const colorFolder = gui.addFolder("Color Settings");
-        colorFolder.addColor({ color: "#ffdbb8" }, "color").name("Primary Color").onChange((val: string) => {
-          material.uniforms.uPrimaryColor.value.set(val);
-        });
-        colorFolder.addColor({ color: "#ffae00" }, "color").name("Secondary Color").onChange((val: string) => {
-          material.uniforms.uSecondaryColor.value.set(val);
-        });
+        colorFolder.addColor({ color: "#ffdbb8" }, "color")
+          .name("Primary Color")
+          .onChange((val: string) => {
+            material.uniforms.uPrimaryColor.value.set(val);
+          });
+        colorFolder.addColor({ color: "#ffae00" }, "color")
+          .name("Secondary Color")
+          .onChange((val: string) => {
+            material.uniforms.uSecondaryColor.value.set(val);
+          });
 
         // Bloom (Glow) Settings Folder
         const bloomFolder = gui.addFolder("Bloom Settings");
@@ -235,12 +237,12 @@ export default function ParticleWave() {
           // Reset colors
           material.uniforms.uPrimaryColor.value.set("#ffdbb8");
           material.uniforms.uSecondaryColor.value.set("#ffae00");
-          
+                  
           // Reset bloom settings
           bloomPass.strength = 0.74;
           bloomPass.radius = 1.0;
           bloomPass.threshold = 0.08;
-          
+                  
           // Reset camera
           camera.position.set(
             particleWaveConfig.camera.position.x,
@@ -253,7 +255,7 @@ export default function ParticleWave() {
             particleWaveConfig.camera.lookAt.z
           );
           camera.updateProjectionMatrix();
-          
+                  
           // Reset lights
           const defaultLightPositions = [
             { x: -10, y: 15, z: 20 },
@@ -271,16 +273,22 @@ export default function ParticleWave() {
           updateLights();
 
           // Safely update GUI controllers if they exist
-          if (gui.__controllers) {
-            Object.values(gui.__controllers).forEach((controller) => controller.updateDisplay());
-          }
-          if (gui.__folders) {
-            Object.values(gui.__folders).forEach((folder) => {
-              if (folder.__controllers) {
-                folder.__controllers.forEach((controller) => controller.updateDisplay());
-              }
-            });
-          }
+          // Safely update GUI controllers if they exist
+const guiAny = gui as unknown as {
+  controllers?: Record<string, { updateDisplay: () => void }>;
+  folders?: Record<string, { controllers: { updateDisplay: () => void }[] }>;
+};
+
+if (guiAny.controllers) {
+  Object.values(guiAny.controllers).forEach((controller) => controller.updateDisplay());
+}
+if (guiAny.folders) {
+  Object.values(guiAny.folders).forEach((folder) => {
+    if (folder.controllers) {
+      folder.controllers.forEach((controller) => controller.updateDisplay());
+    }
+  });
+}
         }}, "reset").name("🔄 Reset Settings");
 
         gui.close();
