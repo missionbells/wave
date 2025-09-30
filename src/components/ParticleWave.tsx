@@ -317,7 +317,14 @@ export default function ParticleWave() {
       let frameCount = 0;
       const animate = () => {
         animationFrameId = requestAnimationFrame(animate);
-        const elapsedTime = clock.getElapsedTime();
+        let elapsedTime = clock.getElapsedTime();
+        
+        // Reset time every hour to prevent floating-point precision issues
+        if (elapsedTime > 3600) {
+          clock.start();
+          elapsedTime = clock.getElapsedTime();
+        }
+        
         material.uniforms.uTime.value = elapsedTime;
         updateLights();
         updateCameraMotion();

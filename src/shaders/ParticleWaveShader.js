@@ -20,15 +20,18 @@ export const vertexShader = `
   void main() {
     vec3 pos = position;
 
+    // Use modulo to prevent floating-point precision issues with large time values
+    float time = mod(uTime, 1000.0);
+
     // Enhanced wave effect - make it more visible
-    float wave = sin((pos.x - uTime * uSpeed) * uFrequency) * 
+    float wave = sin((pos.x - time * uSpeed) * uFrequency) * 
                  cos(pos.y * uFrequency * 0.5) * 
                  uAmplitude;
     pos.z += wave;
     vWaveEffect = wave;
 
-    // Depth-based parallax effect
-    pos.x += uTime * 0.1 * (1.0 - pos.z * 0.08);
+    // Depth-based parallax effect - use periodic motion to prevent drift
+    pos.x += sin(time * 0.05) * 2.0 * (1.0 - pos.z * 0.08);
 
     // Dynamic particle size based on depth
     float depthFactor = clamp(1.5 / (gl_Position.w + 0.8), 0.6, 2.2);
