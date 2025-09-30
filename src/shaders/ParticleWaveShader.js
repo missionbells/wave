@@ -20,11 +20,11 @@ export const vertexShader = `
   void main() {
     vec3 pos = position;
 
-    // Enhanced rolling wave effect with smooth oscillations
-    float wave = sin((pos.x - uTime * uSpeed) * uFrequency) *
-                 cos(pos.y * uFrequency * 0.8) *
-                 (1.0 + 0.3 * sin(uTime * 0.5 + pos.x * 0.2));
-    pos.z += wave * uAmplitude;
+    // Enhanced wave effect - make it more visible
+    float wave = sin((pos.x - uTime * uSpeed) * uFrequency) * 
+                 cos(pos.y * uFrequency * 0.5) * 
+                 uAmplitude;
+    pos.z += wave;
     vWaveEffect = wave;
 
     // Depth-based parallax effect
