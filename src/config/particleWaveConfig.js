@@ -9,7 +9,7 @@ const particleWaveConfig = {
       uFrequency: 0.1, // Adjust frequency for better wave pattern
       uSpeed: 2.0, // Slower animation for better visibility
       uBlurStrength: 2.5, // Depth blur intensity
-      pointSize: 1.0, // Increase particle size for better visibility
+      pointSize: 0.5, // Particle size
       uColorWaveSpeed: 0.8, // 🔥 Speed at which the wave moves across particles
     },
   
